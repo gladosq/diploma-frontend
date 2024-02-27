@@ -1,0 +1,45 @@
+@mixin preloader {
+  cursor: default;
+  pointer-events: none;
+  border: 1px solid transparent;
+  overflow: hidden;
+  z-index: 0;
+  animation: pulse-background 1.6s infinite cubic-bezier(.79,.03,.68,.96);
+  transition: 0.4s opacity ease-in-out;
+  color: rgba(255, 255, 255, 0.6);
+  opacity: 0.7;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background: $basic-purple;
+    opacity: 1;
+    animation: progress-bar 2s 1 cubic-bezier(.79,.03,.68,.96) forwards;
+    z-index: -1;
+  }
+}
+
+@keyframes pulse-background {
+  0% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: $basic-purple;
+  }
+  100% {
+    border-color: transparent;
+  }
+}
+
+@keyframes progress-bar {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}

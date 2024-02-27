@@ -1,0 +1,23 @@
+.input {
+  padding: 10px 14px;
+}
+
+.form {
+  margin-top: 40px;
+}
+
+.formInner {
+  width: 100%;
+}
+
+.formItem {
+  margin-bottom: 14px;
+
+  :global(.ant-form-item-explain-error) {
+    padding-left: 10px;
+  }
+}
+
+.buttonWrapper {
+  margin-top: 40px;
+}

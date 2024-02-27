@@ -1,0 +1,13 @@
+.radioContent {
+  //font-family: 'Podkova', Courier, monospace;
+  font-weight: 400;
+  font-size: 24px;
+  padding-left: 10px;
+  transition: 0.25s color ease-in-out;
+}
+
+.radioChecked {
+  color: $basic-red;
+  //font-weight: 700;
+
+}

@@ -1,0 +1,40 @@
+@import "src/styles/utils.scss";
+
+.button {
+  color: $basic-white;
+  font-size: 16px;
+  padding: 7px 30px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  transition-property: transform;
+  background: $basic-blue;
+  font-weight: 300;
+  border-radius: 6px;
+  border: 1px solid $basic-blue;
+  height: max-content;
+  position: relative;
+  font-family: 'Ubuntu', Consolas, monospace;
+
+  &:hover {
+    transform: scale(0.97);
+  }
+
+  &:active {
+    transform: scale(1);
+    transition: none;
+  }
+}
+
+.buttonSecondary {
+  border: 2px solid $basic-blue;
+  background: rgba(52, 129, 235, 0.1);
+}
+
+.buttonRed {
+  border: 2px solid $basic-red;
+  background: rgba(235, 52, 140, 0.1);
+}
+
+.isLoading {
+  @include preloader;
+}

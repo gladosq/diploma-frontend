@@ -1,0 +1,70 @@
+.wrapper {
+  border-radius: $border-radius-s;
+  margin-top: 30px;
+  background: $extra-light-background;
+  padding: 11px 27px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: $basic-green;
+  }
+}
+
+.textContainer {
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 16px;
+  }
+
+  p {
+    color: $basic-gray;
+    line-height: 22px;
+    display: inline-block;
+  }
+}
+
+.labelContainer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  span {
+    display: inline-block;
+    height: max-content;
+    line-height: 12px;
+  }
+}
+
+.correctCaption {
+  color: $basic-green;
+  font-size: 20px;
+}
+
+.wrongCaption {
+  color: $basic-red;
+  font-size: 20px;
+}
+
+.date {
+  margin-top: auto;
+  color: $basic-gray;
+  font-size: 14px;
+}

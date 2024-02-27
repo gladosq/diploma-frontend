@@ -1,0 +1,55 @@
+:root {
+  font-family: 'Ubuntu', Courier, monospace;
+  line-height: 1.5;
+  font-weight: 300;
+  background: $basic-purple;
+  font-synthesis: none;
+}
+
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 4px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+  border-radius: 9999px;
+  background-color: $dark-background;
+}
+
+#root {
+  margin: 0 auto;
+  min-width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  //padding-left: calc(100vw - 100%);
+}
+
+a {
+  color: black;
+  text-decoration: inherit;
+
+  &:hover {
+    color: black;
+  }
+}
+
+ul, li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  color: $basic-white;
+  margin: 0;
+  font-weight: 500;
+  font-size: 26px;
+}

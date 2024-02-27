@@ -1,0 +1,66 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.container {
+  background: $light-background;
+  border-radius: $border-radius-m;
+  padding: $base-padding;
+  color: $basic-white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.innerContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.name,
+.subtitle {
+  font-weight: 300;
+  font-size: 32px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.buttonContainer {
+  height: max-content;
+}
+
+.statusInner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.post {
+  color: $basic-gray;
+}
+
+.rate {
+  font-size: 40px;
+  font-weight: 300;
+  margin: 0;
+}
+
+.caption {
+  margin-top: 30px;
+}

@@ -1,0 +1,29 @@
+.ant-input {
+  font-weight: 300;
+}
+
+.ant-radio-button-wrapper {
+  color: $basic-blue;
+}
+
+.ant-radio-button-wrapper-checked {
+  color: $basic-white !important;
+}
+
+.ant-select-arrow {
+  color: $basic-white !important;
+}
+
+.ant-select-selector {
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+
+.ant-select-selection-item,
+.ant-select-item-option-content {
+  font-weight: 300 !important;
+}
+
+.ant-select-open .ant-select-selection-item {
+  color: rgba(255, 255, 255, 0.2) !important;
+}
