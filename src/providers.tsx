@@ -1,9 +1,19 @@
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {QueryCache, QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import React from 'react';
 import {ConfigProvider} from 'antd';
+import {useNavigate} from 'react-router-dom';
 
 export default function Providers({children}: { children: React.ReactNode }) {
+  const history = useNavigate();
+
   const [queryClient] = React.useState(() => new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error) => {
+        if (error.message === 'Unauthorized') {
+          history('/login');
+        }
+      },
+    }),
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,

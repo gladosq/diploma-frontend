@@ -2,21 +2,23 @@ import s from './ModulesList.module.scss';
 import {Link} from 'react-router-dom';
 import Button from '../UI/Button/Button.tsx';
 import {Form, Input, message, Modal, Select} from 'antd';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {CreateModulePayload, fetchCreateModule, useAllModules} from '../../api/modules.ts';
 import {useCookies} from 'react-cookie';
-import {DifficultyType} from '../../const/enum.ts';
-import {useMutation} from '@tanstack/react-query';
+import {DifficultyEnum, RoleEnum} from '../../const/enum.ts';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import {difficultyMapper} from '../../utils/mappers.ts';
+import {SearchProps} from 'antd/es/input';
 
-const {TextArea} = Input;
+const {TextArea, Search} = Input;
 
 export default function ModulesList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [cookies, setCookie, removeCookie] = useCookies(['auth-data']);
-
   const [form] = Form.useForm<CreateModulePayload['module']>();
+  const [cookies] = useCookies(['auth-data']);
+
+  const {data: dataProfile, isSuccess} = useQuery<{role: string}>({ queryKey: ['my-profile']});
+  const isModerator = dataProfile?.role === RoleEnum.Moderator;
 
   const onFinish = async (formValues: CreateModulePayload['module']) => {
     console.log('formValues:', formValues);
@@ -25,19 +27,17 @@ export default function ModulesList() {
       {
         module: {
           ...formValues,
-          difficulty: formValues.difficulty.value
+          difficulty: formValues.difficulty
         },
         token: cookies['auth-data']
         },
       {
         onSuccess: (res) => {
-          console.log('res:', res);
           message.info(`Модуль ${res.title} успешно создан`);
           refetch();
           setIsModalOpen(false);
         },
         onError: (err: any) => {
-          console.log('err:', err);
           message.info(err.message.message);
         }
       }
@@ -50,24 +50,34 @@ export default function ModulesList() {
 
   const {data, isFetching, refetch} = useAllModules({token: cookies['auth-data']});
 
+  // console.log('isError:', isError);
+
   const {mutate, isPending} = useMutation({
     mutationFn: (values: CreateModulePayload) => {
       return fetchCreateModule(values);
     }
   });
 
+  const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
+
   return (
     <div className={s.wrapper}>
       <div className={s.header}>
         <h1>Выбрать модуль</h1>
-        <input type='text' placeholder='Поиск модуля'/>
+        <Search
+          placeholder="input search text"
+          allowClear
+          onSearch={onSearch}
+          style={{ width: 304 }}
+        />
+        {/*<input type='text' placeholder='Поиск модуля'/>*/}
       </div>
       <ul className={s.list}>
         {isFetching && <h1>preloader</h1>}
         {data?.map((item) => {
           return (
             <li key={item.id} className={s.item}>
-              <Link className={s.logoLink} to={'/module/1'}>
+              <Link className={s.logoLink} to={`/module/${item.id}`}>
                 <h2>{item.title}</h2>
                 <p className={s.description}>{item.description}</p>
                 <div className={s.info}>
@@ -75,7 +85,7 @@ export default function ModulesList() {
                   <div className={s.infoInner}>
                     <div className={s.difficulty}>
                       <span>Сложность:</span>
-                      <span className={s.label}>{difficultyMapper[item.difficulty as DifficultyType]}</span></div>
+                      <span className={s.label}>{difficultyMapper[item.difficulty as DifficultyEnum]}</span></div>
                     <span className={s.count}>12 вопросов</span>
                   </div>
                 </div>
@@ -84,15 +94,17 @@ export default function ModulesList() {
           );
         })}
       </ul>
-      <div className={s.moderateWrapper}>
-        <Button
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        >
-          Создать новый модуль
-        </Button>
-      </div>
+      {isModerator && (
+        <div className={s.moderateWrapper}>
+          <Button
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            Создать новый модуль
+          </Button>
+        </div>
+      )}
       <Modal
         title='Создание нового модуля'
         open={isModalOpen}
@@ -129,7 +141,7 @@ export default function ModulesList() {
             >
               <TextArea
                 className={s.input}
-                placeholder='Название модуля'
+                placeholder='Описание модуля'
                 size='large'
                 autoSize={{ minRows: 4, maxRows: 4 }}
 
@@ -152,19 +164,19 @@ export default function ModulesList() {
             >
               <Select
                 labelInValue
-                defaultValue={{value: DifficultyType.Medium, label: 'Средняя'}}
+                defaultValue={{value: DifficultyEnum.Medium, label: 'Средняя'}}
                 onChange={handleChange}
                 options={[
                   {
-                    value: DifficultyType.Hard,
+                    value: DifficultyEnum.Hard,
                     label: 'Сложная',
                   },
                   {
-                    value: DifficultyType.Medium,
+                    value: DifficultyEnum.Medium,
                     label: 'Средняя',
                   },
                   {
-                    value: DifficultyType.Easy,
+                    value: DifficultyEnum.Easy,
                     label: 'Легкая',
                   },
                 ]}

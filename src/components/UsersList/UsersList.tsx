@@ -9,7 +9,6 @@ export default function UsersList() {
   const [form] = Form.useForm();
 
   const onFinish = async (formValues) => {
-    console.log('formValues:', formValues);
   };
 
 

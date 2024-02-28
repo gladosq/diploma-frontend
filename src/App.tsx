@@ -14,6 +14,7 @@ import ModerateArticle from './components/ModerateArticle/ModerateArticle.tsx';
 import ModerateTest from './components/ModerateTest/ModerateTest.tsx';
 import PrivateRoutes from '../private-routes.tsx';
 import LoginPage from './components/LoginPage/LoginPage.tsx';
+import ModuleTest from './components/ModuleTest/ModuleTest.tsx';
 
 export default function App() {
 
@@ -26,6 +27,7 @@ export default function App() {
         <Route index path='/' element={<MainPage/>}/>
         <Route path='/module/:id' element={<ModuleDetails/>}/>
         <Route path='/module/:id/article' element={<ModuleArticle/>}/>
+        <Route path='/module/:id/test' element={<ModuleTest/>}/>
         <Route path='/profile' element={<Profile/>}/>
         <Route path='/profile/tests' element={<TestsList/>}/>
         <Route path='/moderate/:id/article' element={<ModerateArticle/>}/>

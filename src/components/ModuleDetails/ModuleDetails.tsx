@@ -1,18 +1,27 @@
 import s from './ModuleDetails.module.scss';
 import Button from '../UI/Button/Button.tsx';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
+import {useModule} from '../../api/modules.ts';
+import {useCookies} from 'react-cookie';
+import {RoleEnum} from '../../const/enum.ts';
+import {useMemo} from 'react';
+import {useQuery} from '@tanstack/react-query';
 
 export default function ModuleDetails() {
   const history = useNavigate();
+  const [cookies] = useCookies(['auth-data']);
+  const {id} = useParams();
 
-  // TODO: хардкод
-  const isModerate = true;
+  const {data: dataProfile, isSuccess} = useQuery<{role: string}>({ queryKey: ['my-profile']});
+  const {data} = useModule({token: cookies['auth-data'], id: id});
+
+  const isModerator = useMemo(() => dataProfile?.role === RoleEnum.Moderator, [isSuccess]);
 
   return (
     <div className={s.wrapper}>
-      {isModerate && (
+      {dataProfile?.role === RoleEnum.Moderator && (
         <div className={s.moderateWrapper}>
-          <h2>Новый модуль</h2>
+          <h2>{data?.title}</h2>
           <span className={s.status}>Снято с публикации</span>
           <div className={s.moderateInner}>
             <Button className={s.publishButton}>
@@ -28,25 +37,24 @@ export default function ModuleDetails() {
           </div>
         </div>
       )}
-
       <div className={s.container}>
         <h2 className={s.title}>Материал</h2>
         <div className={s.content}>
-          1. Контекст функций и проблема потери окружения<br/>
-          2. Деструктуризация<br/>
-          3. Как сообщения попадают в консоль<br/>
+          {!!data?.article.length ? data.article : (
+            <span className={s.emptyData}>не заполнено</span>
+          )}
         </div>
         <Button
           className={s.button}
           onClick={() => {
-            if (!isModerate) {
-              history('/module/1/article');
+            if (!isModerator) {
+              history(`/module/${id}/article`);
             } else {
               history('/moderate/1/article');
             }
           }}
         >
-          {isModerate ? 'Редактировать статью' : 'Изучить материал'}
+          {isModerator ? 'Редактировать статью' : 'Изучить материал'}
         </Button>
       </div>
       <div className={s.container}>
@@ -58,14 +66,14 @@ export default function ModuleDetails() {
         <Button
           className={s.button}
           onClick={() => {
-            if (!isModerate) {
-              history('/module/1/test');
+            if (!isModerator) {
+              history(`/module/${id}/test`);
             } else {
-              history('/moderate/1/test');
+              history(`/moderate/${id}/test`);
             }
           }}
         >
-          {isModerate ? 'Редактировать тест' : 'Пройти тестирование'}
+          {isModerator ? 'Редактировать тест' : 'Пройти тестирование'}
         </Button>
       </div>
     </div>

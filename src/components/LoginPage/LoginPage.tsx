@@ -24,13 +24,11 @@ export default function LoginPage() {
       {email: formValues.email, password: formValues.password},
       {
         onSuccess: (res) => {
-          // onUserLogin(res.accessToken);
-          message.error('Успешная авторизация');
+          message.info('Успешная авторизация');
           setCookie('auth-data', res.accessToken);
           history('/');
         },
         onError: (err: any) => {
-          console.log('err:', err);
           message.info(err.message.message);
         }
       }

@@ -1,6 +1,11 @@
 import s from './ModerateTest.module.scss';
-import {Form, Input, Radio} from 'antd';
+import {Form, Input, message, Radio, Upload, UploadProps} from 'antd';
 import Button from '../UI/Button/Button.tsx';
+import {useMutation} from '@tanstack/react-query';
+import {ModulesResponseType, updateTestModuleFetcher, useModule} from '../../api/modules.ts';
+import {useCookies} from 'react-cookie';
+import {useParams} from 'react-router-dom';
+import {useEffect} from 'react';
 
 const {TextArea} = Input;
 
@@ -17,21 +22,69 @@ type FormType = {
   questions: QuestionType[];
 }
 
+const props: UploadProps = {
+  name: 'file',
+  action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+  headers: {
+    authorization: 'authorization-text',
+  },
+  onChange(info) {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+};
+
+const normFile = (e: any) => {
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e?.fileList;
+};
+
 export default function ModerateTest() {
   const [form] = Form.useForm();
+  const [cookies] = useCookies(['auth-data']);
+  // const [questions, setQuestions] = useState([]);
+
+  const {id} = useParams();
+
+  const {data, isSuccess, isFetching} = useModule({token: cookies['auth-data'], id: id});
+
+
+  console.log('data:', data);
+
+  const {mutate, isPending} = useMutation({
+    mutationFn: (data: ModulesResponseType['testing'], token, id) => {
+      return updateTestModuleFetcher(data, token, id);
+    }});
 
   const onFinish = async (formValues: FormType) => {
     console.log('formValues:', formValues);
 
-    const withFormattedRadio = formValues.questions.map((item) => {
-      if (!item.correctAnswer) {
-        item.correctAnswer = "1";
-      }
-      return;
-    });
-
-    console.log('withFormattedRadio:', withFormattedRadio);
+    // mutate(
+    //   {data: formValues.questions, token: cookies['auth-data'], id: id},
+    //   {
+    //     onSuccess: (res) => {
+    //       message.info('Тест успешно сохранен');
+    //     },
+    //     onError: (err: any) => {
+    //       message.info(err.message.message);
+    //     }
+    //   }
+    // );
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      form.setFieldsValue({questions: data.testing.length ? data.testing : ['']});
+    }
+  }, [form, isSuccess])
 
   return (
     <div className={s.wrapper}>
@@ -42,7 +95,7 @@ export default function ModerateTest() {
           form={form}
           scrollToFirstError
           layout='vertical'
-          initialValues={{questions: ['']}}
+          initialValues={{questions: []}}
           autoComplete='off'
         >
           <Form.List name='questions'>
@@ -50,10 +103,6 @@ export default function ModerateTest() {
               <>
                 {fields.map(({key, name, ...restField}) => (
                   <div key={key}>
-                    <div className={s.questionTitleWrapper}>
-                      {/*<h3>Вопрос №{key + 1}</h3>*/}
-
-                    </div>
                     <div className={s.formRowContainer}>
                       <div className={s.innerWrapper}>
                         <div className={s.questionContainer}>
@@ -77,7 +126,7 @@ export default function ModerateTest() {
                                 {...restField}
                                 name={[name, 'variant1']}
                                 className={s.formItemVariant}
-                                rules={[{required: false}]}
+                                rules={[{required: true, message: 'Заполните поле'}]}
                               >
                                 <Input
                                   className={s.input}
@@ -92,7 +141,7 @@ export default function ModerateTest() {
                                 {...restField}
                                 name={[name, 'variant2']}
                                 className={s.formItemVariant}
-                                rules={[{required: false}]}
+                                rules={[{required: true, message: 'Заполните поле'}]}
                               >
                                 <Input
                                   className={s.input}
@@ -107,7 +156,7 @@ export default function ModerateTest() {
                                 {...restField}
                                 name={[name, 'variant3']}
                                 className={s.formItemVariant}
-                                rules={[{required: false}]}
+                                rules={[{required: true, message: 'Заполните поле'}]}
                               >
                                 <Input
                                   className={s.input}
@@ -123,7 +172,7 @@ export default function ModerateTest() {
                                 {...restField}
                                 name={[name, 'variant4']}
                                 className={s.formItemVariant}
-                                rules={[{required: false}]}
+                                rules={[{required: true, message: 'Заполните поле'}]}
                               >
                                 <Input
                                   className={s.input}
@@ -136,7 +185,6 @@ export default function ModerateTest() {
                           </div>
                           <div className={s.buttonsWrapper}>
                             <div className={s.radioWrapper}>
-                              <span className={s.radioCorrectTitle}>Правильный ответ:</span>
                               <Form.Item
                                 {...restField}
                                 name={[name, 'correctAnswer']}
@@ -150,6 +198,7 @@ export default function ModerateTest() {
                                   <Radio.Button value="4">4</Radio.Button>
                                 </Radio.Group>
                               </Form.Item>
+                              <span className={s.radioCorrectTitle}>Правильный ответ</span>
                             </div>
                             <Button
                               onClick={() => remove(name)}
@@ -158,11 +207,34 @@ export default function ModerateTest() {
                               Удалить
                             </Button>
                             <div className={s.uploadImageContainer}>
-                              <Button
-                                viewType={'secondary'}
+                              <Form.Item
+                                {...restField}
+                                name={[name, 'picture']}
+                                className={s.formItemSelect}
+                                valuePropName='fileList'
+                                getValueFromEvent={normFile}
+
                               >
-                                Прикрепить изображение
-                              </Button>
+                                <Upload
+                                  maxCount={1}
+                                  customRequest={({onSuccess}) =>
+                                    setTimeout(() => {
+                                      // @ts-ignore
+                                      onSuccess('ok', null);
+                                    }, 0)
+                                  }
+                                  {...props}
+                                >
+                                  <Button
+                                    viewType={'secondary'}
+                                  >
+                                    Прикрепить изображение
+
+                                  </Button>
+
+                                  {/*<Button>Click to Upload</Button>*/}
+                                </Upload>
+                              </Form.Item>
                             </div>
                           </div>
                         </div>

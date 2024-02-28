@@ -13,6 +13,13 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
+
+  @media (max-width: 1300px) {
+
+    display: flex;
+    flex-direction: column;
+
+  }
 }
 
 .formItemQuestion {
@@ -28,6 +35,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr 2fr;
+  }
 }
 
 .questionContainer {
@@ -60,6 +71,13 @@
 
 .radioWrapper {
   margin-right: auto;
+  min-width: 160px;
+
+  @media (max-width: 1200px) {
+    margin-right: 0;
+    margin-left: auto;
+
+  }
 }
 
 .radioCorrectTitle {
@@ -69,7 +87,7 @@
 }
 
 .formItemSelect {
-  margin: 0;
+  margin: 0 0 6px;
 }
 
 .formRowContainer {
@@ -84,10 +102,10 @@
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 300px;
+  border-radius: 10px;
   padding-left: 12px;
 }
 

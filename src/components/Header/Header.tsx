@@ -1,13 +1,24 @@
 import s from './Header.module.scss';
 import LogoIcon from '../UI/Icons/LogoIcon.tsx';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import {CaretDownIcon} from '@radix-ui/react-icons';
 import {ListItem} from './ListItemLink.tsx';
 import './../../styles/radix-custom.scss';
 import {Breadcrumb} from 'antd';
+import {useCookies} from 'react-cookie';
+import {useProfile} from '../../api/authentication.ts';
+import {useMemo} from 'react';
+import {RoleEnum} from '../../const/enum.ts';
+// import {useCookies} from 'react-cookie/esm';
 
 export default function Header() {
+  const history = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(['auth-data']);
+
+  const {data: dataProfile} = useProfile({token: cookies['auth-data']});
+
+  const isModerator = dataProfile?.role === RoleEnum.Moderator;
 
   return (
     <>
@@ -20,7 +31,7 @@ export default function Header() {
             <NavigationMenu.List className='NavigationMenuList'>
               <NavigationMenu.Item>
                 <NavigationMenu.Trigger className='NavigationMenuTrigger'>
-                  Учебник <CaretDownIcon className='CaretDown' aria-hidden />
+                  Учебник <CaretDownIcon className='CaretDown' aria-hidden/>
                 </NavigationMenu.Trigger>
                 <NavigationMenu.Content className='NavigationMenuContent'>
                   <ul className='List one'>
@@ -63,9 +74,11 @@ export default function Header() {
                     <ListItem title='Мои тесты' href='/profile/tests'>
                       <span className='caption'>Информация о пройденных тестах</span>
                     </ListItem>
-                    <ListItem title='Модерация' href='/moderate'>
-                      <span className='caption'>Добавление, редактирование, удаление пользователей и модулей</span>
-                    </ListItem>
+                    {isModerator && (
+                      <ListItem title='Модерация' href='/moderate'>
+                        <span className='caption'>Добавление, редактирование, удаление пользователей и модулей</span>
+                      </ListItem>
+                    )}
                   </ul>
                 </NavigationMenu.Content>
               </NavigationMenu.Item>
@@ -83,7 +96,16 @@ export default function Header() {
               </NavigationMenu.Item>
 
               <NavigationMenu.Item>
-                <NavigationMenu.Link className='NavigationMenuLink' href='https://github.com/radix-ui'>
+                <NavigationMenu.Link
+                  type={'button'}
+                  className='NavigationMenuLink'
+                  // href='https://github.com/radix-ui'
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // removeCookie('auth-data', {path: '/'});
+                    history('/login');
+                  }}
+                >
                   Выйти
                 </NavigationMenu.Link>
               </NavigationMenu.Item>
