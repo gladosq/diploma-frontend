@@ -1,6 +1,6 @@
 .wrapper {
   border-radius: $border-radius-s;
-  margin-top: 30px;
+  //margin-top: 30px;
   background: $extra-light-background;
   padding: 11px 27px;
   display: flex;
@@ -8,6 +8,7 @@
   gap: 20px;
   position: relative;
   overflow: hidden;
+
 
   &::before {
     content: "";

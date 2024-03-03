@@ -1,22 +1,31 @@
 import s from './ResultItem.module.scss';
+import dayjs from 'dayjs';
 
-export default function ResultItem() {
+type ResultItemProps = {
+  title: string;
+  description: string;
+  createdAt: string;
+  correct: number;
+  wrong: number;
+}
+
+export default function ResultItem({title, description, createdAt, correct, wrong}: ResultItemProps) {
   return (
     <div className={s.wrapper}>
       <div className={s.textContainer}>
-        <h2>Встроенные объекты и функции</h2>
-        <p>Контекст функции — некоторая противоположность областям видимости. Ключевая разница в том, что область видимости самой функции и доступные ей родительские области видимости...</p>
+        <h2>{title}</h2>
+        <p>{description}</p>
       </div>
       <div className={s.labelContainer}>
         <div className={s.inner}>
           Верных ответов:
-          <span className={s.correctCaption}>8</span>
+          <span className={s.correctCaption}>{correct}</span>
         </div>
         <div className={s.inner}>
           Ошибок:
-          <span className={s.wrongCaption}>2</span>
+          <span className={s.wrongCaption}>{wrong}</span>
         </div>
-        <div className={s.date}>21.04.24</div>
+        <div className={s.date}>{dayjs(createdAt).format('DD.MM.YY HH:mm')}</div>
       </div>
     </div>
   );

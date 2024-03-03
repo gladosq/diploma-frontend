@@ -25,7 +25,7 @@ export default function App() {
           <Route path='/moderate' element={<Moderate/>}/>
         </Route>
         <Route index path='/' element={<MainPage/>}/>
-        <Route path='/module/:id' element={<ModuleDetails/>}/>
+        <Route path='/module/:moduleId' element={<ModuleDetails/>}/>
         <Route path='/module/:id/article' element={<ModuleArticle/>}/>
         <Route path='/module/:id/test' element={<ModuleTest/>}/>
         <Route path='/profile' element={<Profile/>}/>

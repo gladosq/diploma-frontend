@@ -27,3 +27,20 @@
 .ant-select-open .ant-select-selection-item {
   color: rgba(255, 255, 255, 0.2) !important;
 }
+
+.ant-input-search-button {
+  height: 44px !important;
+  width: 40px !important;
+  background: $dark-background;
+  border-color: $dark-background;
+
+  &:hover {
+    background: $dark-background !important;
+
+  }
+
+  svg {
+    color: $basic-white;
+
+  }
+}

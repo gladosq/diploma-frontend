@@ -1,6 +1,6 @@
 import s from './Header.module.scss';
 import LogoIcon from '../UI/Icons/LogoIcon.tsx';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useLocation, useNavigate, useParams} from 'react-router-dom';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import {CaretDownIcon} from '@radix-ui/react-icons';
 import {ListItem} from './ListItemLink.tsx';
@@ -8,16 +8,40 @@ import './../../styles/radix-custom.scss';
 import {Breadcrumb} from 'antd';
 import {useCookies} from 'react-cookie';
 import {useProfile} from '../../api/authentication.ts';
-import {useMemo} from 'react';
 import {RoleEnum} from '../../const/enum.ts';
-// import {useCookies} from 'react-cookie/esm';
+import {breadcrumbsMapper, RoutesEnum, routesMapper} from '../../utils/mappers.ts';
+
+type LinkItemType = {
+  title: string;
+  href: string | undefined;
+}
 
 export default function Header() {
   const history = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies(['auth-data']);
+  const [cookies, , removeCookie] = useCookies(['auth-data']);
+  const location = useLocation();
+
+  const routes = location.pathname !== '/' ? location.pathname.split('/') : location.pathname.split('/').slice(1);
+  const params = useParams();
+  const dynamicId = Object.keys(params)[0];
+  const correctPaths = routes.reduce((acc: LinkItemType[], current) => {
+    let link: string | undefined;
+    let title;
+
+    if (dynamicId && current === params[dynamicId]) {
+      link = current;
+      title = 'Информация о модуле';
+    } else {
+      link = routesMapper[current as RoutesEnum];
+      title = breadcrumbsMapper[current as RoutesEnum];
+    }
+
+    const path = {href: link, title: title};
+    acc.push(path);
+    return acc;
+  }, []);
 
   const {data: dataProfile} = useProfile({token: cookies['auth-data']});
-
   const isModerator = dataProfile?.role === RoleEnum.Moderator;
 
   return (
@@ -84,13 +108,15 @@ export default function Header() {
               </NavigationMenu.Item>
 
               <NavigationMenu.Item>
-                <NavigationMenu.Link className='NavigationMenuLink' href='https://github.com/radix-ui'>
+                <NavigationMenu.Link className='NavigationMenuLink'
+                                     href='https://github.com/radix-ui'>
                   Gitlab
                 </NavigationMenu.Link>
               </NavigationMenu.Item>
 
               <NavigationMenu.Item>
-                <NavigationMenu.Link className='NavigationMenuLink' href='https://github.com/radix-ui'>
+                <NavigationMenu.Link className='NavigationMenuLink'
+                                     href='https://github.com/radix-ui'>
                   Jira
                 </NavigationMenu.Link>
               </NavigationMenu.Item>
@@ -99,10 +125,9 @@ export default function Header() {
                 <NavigationMenu.Link
                   type={'button'}
                   className='NavigationMenuLink'
-                  // href='https://github.com/radix-ui'
                   onClick={(e) => {
                     e.preventDefault();
-                    // removeCookie('auth-data', {path: '/'});
+                    removeCookie('auth-data', {path: '/'});
                     history('/login');
                   }}
                 >
@@ -123,21 +148,8 @@ export default function Header() {
       </div>
       <div className={s.breadcrumbs}>
         <Breadcrumb
+          items={correctPaths}
           separator='>'
-          items={[
-            {
-              // title: 'Главная',
-              title: <Link to={'/'}>Главная</Link>
-            },
-            {
-              title: 'Application Center',
-              href: '',
-            },
-            {
-              title: 'Application List',
-              href: '',
-            }
-          ]}
         />
       </div>
     </>

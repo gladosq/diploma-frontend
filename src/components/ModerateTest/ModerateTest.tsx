@@ -2,7 +2,11 @@ import s from './ModerateTest.module.scss';
 import {Form, Input, message, Radio, Upload, UploadProps} from 'antd';
 import Button from '../UI/Button/Button.tsx';
 import {useMutation} from '@tanstack/react-query';
-import {ModulesResponseType, updateTestModuleFetcher, useModule} from '../../api/modules.ts';
+import {
+  updateModuleFetcher,
+  UpdateModulePayload,
+  useModule
+} from '../../api/modules.ts';
 import {useCookies} from 'react-cookie';
 import {useParams} from 'react-router-dom';
 import {useEffect} from 'react';
@@ -50,34 +54,29 @@ const normFile = (e: any) => {
 export default function ModerateTest() {
   const [form] = Form.useForm();
   const [cookies] = useCookies(['auth-data']);
-  // const [questions, setQuestions] = useState([]);
-
   const {id} = useParams();
 
-  const {data, isSuccess, isFetching} = useModule({token: cookies['auth-data'], id: id});
+  const {data, isSuccess} = useModule({token: cookies['auth-data'], id: id});
 
-
-  console.log('data:', data);
-
-  const {mutate, isPending} = useMutation({
-    mutationFn: (data: ModulesResponseType['testing'], token, id) => {
-      return updateTestModuleFetcher(data, token, id);
+  const {mutate} = useMutation({
+    mutationFn: ({data, token, id}: UpdateModulePayload) => {
+      return updateModuleFetcher({data, token, id});
     }});
 
   const onFinish = async (formValues: FormType) => {
-    console.log('formValues:', formValues);
+    const updatedModule = {...data, testing: formValues.questions};
 
-    // mutate(
-    //   {data: formValues.questions, token: cookies['auth-data'], id: id},
-    //   {
-    //     onSuccess: (res) => {
-    //       message.info('Тест успешно сохранен');
-    //     },
-    //     onError: (err: any) => {
-    //       message.info(err.message.message);
-    //     }
-    //   }
-    // );
+    mutate(
+      {data: updatedModule as UpdateModulePayload['data'], token: cookies['auth-data'], id: id!},
+      {
+        onSuccess: () => {
+          message.info('Тест успешно сохранен');
+        },
+        onError: (err: any) => {
+          message.info(err.message.message);
+        }
+      }
+    );
   };
 
   useEffect(() => {
@@ -113,10 +112,7 @@ export default function ModerateTest() {
                             className={s.formItemQuestion}
                             rules={[{required: true, message: 'Введите текст вопроса'}]}
                           >
-                            <TextArea
-                              placeholder='Текст вопроса'
-                              style={{resize: 'none'}}
-                            />
+                            <TextArea placeholder='Текст вопроса' style={{resize: 'none'}}/>
                           </Form.Item>
                         </div>
                         <div className={s.container}>
@@ -200,10 +196,7 @@ export default function ModerateTest() {
                               </Form.Item>
                               <span className={s.radioCorrectTitle}>Правильный ответ</span>
                             </div>
-                            <Button
-                              onClick={() => remove(name)}
-                              viewType={'red'}
-                            >
+                            <Button onClick={() => remove(name)} viewType={'red'}>
                               Удалить
                             </Button>
                             <div className={s.uploadImageContainer}>
@@ -213,7 +206,6 @@ export default function ModerateTest() {
                                 className={s.formItemSelect}
                                 valuePropName='fileList'
                                 getValueFromEvent={normFile}
-
                               >
                                 <Upload
                                   maxCount={1}
@@ -225,14 +217,9 @@ export default function ModerateTest() {
                                   }
                                   {...props}
                                 >
-                                  <Button
-                                    viewType={'secondary'}
-                                  >
+                                  <Button viewType={'secondary'} className={s.addPicture}>
                                     Прикрепить изображение
-
                                   </Button>
-
-                                  {/*<Button>Click to Upload</Button>*/}
                                 </Upload>
                               </Form.Item>
                             </div>
@@ -243,13 +230,7 @@ export default function ModerateTest() {
                   </div>
                 ))}
                 <div className={s.formItemAddButton}>
-                  <Button
-                    onClick={() => {
-                      form.submit();
-                    }}
-                  >
-                    Сохранить
-                  </Button>
+                  <Button type={'submit'}>Сохранить</Button>
                   <Button
                     type='button'
                     className={s.addButton}

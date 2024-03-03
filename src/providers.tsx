@@ -18,7 +18,7 @@ export default function Providers({children}: { children: React.ReactNode }) {
       queries: {
         refetchOnWindowFocus: false,
         staleTime: 5 * 1000,
-        retry: 0
+        // retry: 0
       },
     }
   }));
@@ -80,6 +80,11 @@ export default function Providers({children}: { children: React.ReactNode }) {
               buttonBg: 'rgba(44, 51, 62, 0.6)',
               buttonCheckedBg: '#3481EB',
               colorBorder: '#3481EB',
+            },
+            Popover: {
+              colorBgElevated: '#3A436A',
+              fontFamily: 'Ubuntu',
+              colorTextHeading: '#F1EBEA'
             },
             Modal: {
               contentBg: '#3A436A',

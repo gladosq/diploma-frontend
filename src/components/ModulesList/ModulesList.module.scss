@@ -14,12 +14,17 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .item {
   background: $dark-background;
   border-radius: $border-radius-s;
   border: 2px solid transparent;
+  transition: 0.25s ease-in-out;
 
   a {
     padding: 20px;
@@ -42,8 +47,8 @@
     color: rgba(255, 255, 255, 0.7);
     font-size: 16px;
     font-weight: 300;
+    margin-bottom: 20px;
   }
-  transition: 0.25s ease-in-out;
 
   &:hover {
     transform: translateY(-4px);
@@ -55,8 +60,15 @@
   margin-top: auto;
 
   .theme {
-    color: #7581ce;
-    font-size: 20px;
+    color: $basic-white;
+    font-size: 14px;
+    padding: 2px 14px;
+    background: rgb(113, 124, 197, 0.4);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    display: block;
+    width: max-content;
+    //border: 1px solid rgba(255, 255, 255, 0.2)
   }
 
   .infoInner {
@@ -68,7 +80,35 @@
   }
 
   .label {
-    color: $light-red;
+    padding: 2px 14px;
+    border-radius: 6px;
+    display: block;
+    width: max-content;
+    //border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  &__difficulty_easy {
+    .label {
+      background: rgba(50, 105, 23, 0.4);
+      color: $basic-white;
+    }
+
+
+  }
+
+  &__difficulty_medium {
+    .label {
+      background: rgba(192, 121, 11, 0.4);
+      color: $basic-white;
+    }
+
+  }
+
+  &__difficulty_hard {
+    .label {
+      background: rgba(216, 78, 78, 0.4);
+      color: $basic-white;
+    }
   }
 }
 
@@ -79,8 +119,14 @@
 }
 
 .count {
-  color: $basic-green;
-  font-weight: 400;
+  font-weight: 300;
+  padding: 2px 14px;
+  color: $basic-white;
+  background: $extra-light-background;
+  border-radius: 6px;
+  display: block;
+  width: max-content;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .moderateWrapper {
@@ -109,4 +155,11 @@
 
 .buttonWrapper {
   margin-top: 30px;
+}
+
+.searchInput {
+
+  :global(.ant-input-affix-wrapper) {
+    max-height: 44px;
+  }
 }
