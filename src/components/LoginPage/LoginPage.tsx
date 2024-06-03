@@ -4,20 +4,18 @@ import Button from '../UI/Button/Button.tsx';
 import {fetchLogin, ILoginPayload} from '../../api/authentication.ts';
 import {useMutation} from '@tanstack/react-query';
 import {useNavigate} from 'react-router-dom';
-import {clsx} from 'clsx';
 import {useCookies} from 'react-cookie';
 
 export default function LoginPage() {
-  const [cookies, setCookie, removeCookie] = useCookies(['auth-data']);
-
+  const [, setCookie,] = useCookies(['auth-data']);
   const [form] = Form.useForm();
-
   const history = useNavigate();
 
   const {mutate, isPending} = useMutation({
     mutationFn: (values: ILoginPayload) => {
       return fetchLogin(values);
-  }});
+    }
+  });
 
   const onFinish = async (formValues: ILoginPayload) => {
     mutate(
@@ -25,7 +23,7 @@ export default function LoginPage() {
       {
         onSuccess: (res) => {
           message.info('Успешная авторизация');
-          setCookie('auth-data', res.accessToken);
+          setCookie('auth-data', res.accessToken, {path: '/'});
           history('/');
         },
         onError: (err: any) => {
@@ -69,7 +67,7 @@ export default function LoginPage() {
             className={s.formItem}
             rules={[{required: true, message: 'Введите пароль'}]}
           >
-            <Input
+            <Input.Password
               className={s.input}
               placeholder='Пароль'
               size='large'

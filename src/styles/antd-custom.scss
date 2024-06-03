@@ -36,11 +36,37 @@
 
   &:hover {
     background: $dark-background !important;
-
   }
 
   svg {
     color: $basic-white;
+  }
+}
 
+.ant-message-notice-content {
+  background: $dark-background !important;
+}
+
+.ant-message-custom-content {
+  font-family: 'Ubuntu', Courier, monospace;
+  color: $basic-white;
+}
+
+.ant-form-item-control-input {
+  ::-webkit-scrollbar {
+    width: 14px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.ant-input-suffix {
+  span {
+    color: rgba(255, 255, 255, 0.3) !important;
   }
 }

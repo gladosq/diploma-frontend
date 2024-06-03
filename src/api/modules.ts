@@ -154,7 +154,8 @@ export const updateModuleFetcher = async ({data, token, id}: UpdateModulePayload
 export function useAllModules({token}: { token: Cookies }) {
   return useQuery({
     queryKey: ['modules'],
-    queryFn: () => fetchModules({token})
+    queryFn: () => fetchModules({token}),
+    staleTime: 0
   })
 }
 
@@ -163,6 +164,6 @@ export function useModule({token, id}: { token: Cookies, id: string | undefined 
     queryKey: ['module'],
     queryFn: () => fetchSingleModule({token, id}),
     enabled: !!(id && token),
-    staleTime: 0
+    staleTime: 0,
   })
 }

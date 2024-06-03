@@ -1,3 +1,10 @@
+@mixin truncate($max) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $max;
+  overflow: hidden;
+}
+
 @mixin preloader {
   cursor: default;
   pointer-events: none;

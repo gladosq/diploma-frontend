@@ -17,22 +17,22 @@ export enum RoutesEnum {
   MainPage = '',
   Profile = 'profile',
   Tests = 'tests',
-  Module = 'module',
   Moderate = 'moderate',
+  Article = 'article',
 }
 
 export const breadcrumbsMapper: Record<RoutesEnum, string> = {
   [RoutesEnum.MainPage]: 'Главная',
-  [RoutesEnum.Module]: 'Модули',
   [RoutesEnum.Profile]: 'Профиль',
   [RoutesEnum.Moderate]: 'Модерация',
-  [RoutesEnum.Tests]: 'Мои тесты'
+  [RoutesEnum.Tests]: 'Мои тесты',
+  [RoutesEnum.Article]: 'Материал'
 };
 
 export const routesMapper: Record<RoutesEnum, string | undefined> = {
   [RoutesEnum.MainPage]: '/',
-  [RoutesEnum.Module]: undefined,
   [RoutesEnum.Profile]: '/profile',
   [RoutesEnum.Moderate]: '/moderate',
-  [RoutesEnum.Tests]: '/profile/tests'
+  [RoutesEnum.Tests]: '/profile/tests',
+  [RoutesEnum.Article]: undefined
 };

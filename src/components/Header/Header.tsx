@@ -29,7 +29,7 @@ export default function Header() {
     let title;
 
     if (dynamicId && current === params[dynamicId]) {
-      link = current;
+      link = `/module/${current}`;
       title = 'Информация о модуле';
     } else {
       link = routesMapper[current as RoutesEnum];
@@ -50,6 +50,12 @@ export default function Header() {
         <Link className={s.logoLink} to={'/'}>
           <LogoIcon/>
         </Link>
+        <div className={s.breadcrumbs}>
+          <Breadcrumb
+            items={correctPaths}
+            separator='>'
+          />
+        </div>
         <div className={s.navigation}>
           <NavigationMenu.Root className='NavigationMenuRoot'>
             <NavigationMenu.List className='NavigationMenuList'>
@@ -108,15 +114,19 @@ export default function Header() {
               </NavigationMenu.Item>
 
               <NavigationMenu.Item>
-                <NavigationMenu.Link className='NavigationMenuLink'
-                                     href='https://github.com/radix-ui'>
+                <NavigationMenu.Link
+                  className='NavigationMenuLink'
+                  href='https://github.com/radix-ui'
+                >
                   Gitlab
                 </NavigationMenu.Link>
               </NavigationMenu.Item>
 
               <NavigationMenu.Item>
-                <NavigationMenu.Link className='NavigationMenuLink'
-                                     href='https://github.com/radix-ui'>
+                <NavigationMenu.Link
+                  className='NavigationMenuLink'
+                  href='https://github.com/radix-ui'
+                >
                   Jira
                 </NavigationMenu.Link>
               </NavigationMenu.Item>
@@ -146,12 +156,12 @@ export default function Header() {
           </NavigationMenu.Root>
         </div>
       </div>
-      <div className={s.breadcrumbs}>
-        <Breadcrumb
-          items={correctPaths}
-          separator='>'
-        />
-      </div>
+      {/*<div className={s.breadcrumbs}>*/}
+      {/*  <Breadcrumb*/}
+      {/*    items={correctPaths}*/}
+      {/*    separator='>'*/}
+      {/*  />*/}
+      {/*</div>*/}
     </>
   );
 }

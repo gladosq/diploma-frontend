@@ -7,10 +7,6 @@ export default function Moderate() {
     <div className={s.wrapper}>
       <UsersList/>
       <ModulesList/>
-
-      {/*<div className={s.container}>*/}
-      {/*  <h1>Список участников</h1>*/}
-      {/*</div>*/}
     </div>
   );
 }

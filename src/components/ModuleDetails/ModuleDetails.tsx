@@ -14,6 +14,7 @@ import {useMutation, useQuery} from '@tanstack/react-query';
 import {clsx} from 'clsx';
 import {Form, Input, message, Modal, Popover, Select} from 'antd';
 import dayjs from 'dayjs';
+import {motion} from "framer-motion";
 
 const requiredFormRule = {required: true, message: 'Заполните поле'};
 const {TextArea} = Input;
@@ -28,7 +29,18 @@ export default function ModuleDetails() {
   const [form] = Form.useForm();
 
   const {data: dataProfile, isSuccess} = useQuery<{ role: string }>({queryKey: ['my-profile']});
-  const {data, isSuccess: isSuccessModule, isFetching: isFetchingModule, isError, error, refetch} = useModule({
+
+  const {
+    data,
+    isSuccess: isSuccessModule,
+    isFetching: isFetchingModule,
+    isError,
+    error,
+    refetch,
+    isLoading: isLoadingModule,
+    isRefetching,
+    isStale
+  } = useModule({
     token: cookies['auth-data'],
     id: moduleId
   });
@@ -39,8 +51,6 @@ export default function ModuleDetails() {
       history('/');
     }
   }, [isError]);
-
-  const {refetch: refetchModules} = useQuery<{ role: string }>({queryKey: ['modules']});
 
   const isModerator = useMemo(() => dataProfile?.role === RoleEnum.Moderator, [isSuccess]);
 
@@ -100,7 +110,7 @@ export default function ModuleDetails() {
       {
         onSuccess: () => {
           message.success('Модуль удален');
-          refetchModules();
+          // refetchModules();
           history('/moderate');
           setIsOpenPopover(false);
         },
@@ -112,69 +122,83 @@ export default function ModuleDetails() {
   };
 
   return (
-    <div className={s.wrapper}>
-      {dataProfile?.role === RoleEnum.Moderator && (
-        <div className={s.moderateWrapper}>
-          <h2>{data?.title}</h2>
-          <h3 className={s.description}>{data?.description}</h3>
-          <h3 className={s.theme}>{data?.theme}</h3>
-          <span className={clsx(s.status, data?.isPublished && s.statusPublished)}>
-            {data?.isPublished ? 'Опубликовано' : 'Снято с публикации'}
-          </span>
-          <div className={s.moderateInner}>
-            <Button
-              className={s.publishButton}
-              viewType={data?.isPublished ? 'red' : 'primary'}
-              onClick={() => {
-                if (data) {
-                  const updatedData: ModulesResponseType = {...data, isPublished: !data?.isPublished};
 
-                  mutate(
-                    {data: updatedData, token: cookies['auth-data'], id: moduleId!},
-                    {
-                      onSuccess: () => {
-                        message.info('Модуль обновлен');
-                        refetch();
-                        setIsModalOpen(false);
-                      },
-                      onError: (err: any) => {
-                        message.info(err.message.message);
+    <div className={s.wrapper}>
+      {isLoadingModule && (<h1>loading</h1>)}
+      <div className={s.moderateWrapper}>
+        <h2>{data?.title}</h2>
+        <h3 className={s.description}>{data?.description}</h3>
+        <h3 className={s.theme}>{data?.theme}</h3>
+        {dataProfile?.role === RoleEnum.Moderator && (
+          <>
+            <span className={clsx(s.status, data?.isPublished && s.statusPublished)}>
+              {data?.isPublished ? 'Опубликовано' : 'Снято с публикации'}
+            </span>
+            <div className={s.moderateInner}>
+              <Button
+                className={s.publishButton}
+                viewType={data?.isPublished ? 'red' : 'primary'}
+                onClick={() => {
+                  if (data) {
+                    const updatedData: ModulesResponseType = {
+                      ...data,
+                      isPublished: !data?.isPublished
+                    };
+
+                    mutate(
+                      {data: updatedData, token: cookies['auth-data'], id: moduleId!},
+                      {
+                        onSuccess: () => {
+                          message.info('Модуль обновлен');
+                          refetch();
+                          setIsModalOpen(false);
+                        },
+                        onError: (err: any) => {
+                          message.info(err.message.message);
+                        }
                       }
-                    }
-                  );
-                }
-              }}
-            >
-              {!data?.isPublished ? 'Опубликовать' : 'Снять с публикации'}
-            </Button>
-            <Button viewType={'secondary'} className={s.publishButton} onClick={() => setIsModalOpen(true)}>
-              Редактировать
-            </Button>
-            <Popover
-              content={popoverContent}
-              title='Удалить модуль?'
-              trigger='click'
-              open={isOpenPopover}
-            >
-              <Button viewType={'red'} onClick={() => setIsOpenPopover(true)}>
-                Удалить
+                    );
+                  }
+                }}
+              >
+                {!data?.isPublished ? 'Опубликовать' : 'Снять с публикации'}
               </Button>
-            </Popover>
-            <div className={s.info}>
-              <p>Создано: {dayjs(data?.updatedAt).format('DD.MM.YY')}</p>
-              <p>Отредактировано: {dayjs(data?.createdAt).format('DD.MM.YY')}</p>
+              <Button viewType={'secondary'} className={s.publishButton}
+                      onClick={() => setIsModalOpen(true)}>
+                Редактировать
+              </Button>
+              <Popover
+                content={popoverContent}
+                title='Удалить модуль?'
+                trigger='click'
+                open={isOpenPopover}
+              >
+                <Button viewType={'red'} onClick={() => setIsOpenPopover(true)}>
+                  Удалить
+                </Button>
+              </Popover>
+              <div className={s.info}>
+                <p>Создано: {dayjs(data?.updatedAt).format('DD.MM.YY')}</p>
+                <p>Отредактировано: {dayjs(data?.createdAt).format('DD.MM.YY')}</p>
+              </div>
             </div>
+          </>
+        )}
+        {dataProfile?.role !== RoleEnum.Moderator && (
+          <div className={s.info}>
+            <p>Создано: {dayjs(data?.updatedAt).format('DD.MM.YY')}</p>
+            <p>Отредактировано: {dayjs(data?.createdAt).format('DD.MM.YY')}</p>
           </div>
-        </div>
-      )}
+        )}
+      </div>
       <div className={s.container}>
         <h2 className={s.title}>Материал</h2>
         <div className={s.content}>
-          {!!data?.article.length ? data.article : (<span className={s.emptyData}>не заполнено</span>)}
+          Чтение теоретического материала для модуля «{data?.title}».
         </div>
         <Button
           className={s.button}
-          onClick={() => history(!isModerator ? `/module/${moduleId}/article` : '/moderate/1/article')}
+          onClick={() => history(!isModerator ? `/module/${moduleId}/article` : `/moderate/${moduleId}/article`)}
         >
           {isModerator ? 'Редактировать статью' : 'Изучить материал'}
         </Button>
@@ -183,7 +207,7 @@ export default function ModuleDetails() {
         <h2 className={s.title}>Тестирование</h2>
         <div className={s.content}>
           Сложность теста: средняя<br/>
-          Вопросов: 12<br/>
+          Вопросов: {data?.testing.length}<br/>
         </div>
         <Button
           className={s.button}

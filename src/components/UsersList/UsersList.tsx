@@ -2,20 +2,37 @@ import s from './UsersList.module.scss';
 import Button from '../UI/Button/Button.tsx';
 import {Form, Input, Modal} from 'antd';
 import {useState} from 'react';
+import {useCookies} from 'react-cookie';
+import {useAllUsers} from '../../api/profile.ts';
+import {jobMapper} from '../../utils/mappers.ts';
+import {JobTitleEnum} from '../../const/enum.ts';
 
 export default function UsersList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cookies] = useCookies(['auth-data']);
+
+
+  const {data, isFetching, refetch} = useAllUsers({token: cookies['auth-data']});
 
   const [form] = Form.useForm();
 
   const onFinish = async (formValues) => {
-  };
 
+  };
 
   return (
     <div className={s.wrapper}>
       <h1>Список участников</h1>
       <div className={s.users}>
+        {data?.map((item) => {
+          return (
+            <div className={s.item} id={item.id}>
+              <h2 className={s.itemName}>{item.name}</h2>
+              <span>{jobMapper[item.jobTitle as keyof typeof JobTitleEnum]}</span>
+              <p>Ставка: {item.grade}</p>
+            </div>
+          )
+        })}
         <div className={s.item}>
           <h2 className={s.itemName}>Шишкин Никита Юрьевич</h2>
           <span>Frontend-разработчик</span>

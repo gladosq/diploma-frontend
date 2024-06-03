@@ -57,3 +57,9 @@
 .buttonWrapper {
   margin-top: 30px;
 }
+
+.users {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

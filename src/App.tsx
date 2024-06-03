@@ -1,8 +1,7 @@
-import {Route, Routes} from 'react-router-dom';
+import {Route, Routes, useLocation} from 'react-router-dom';
 import '@/styles/global.scss';
 import '@/styles/font-family.scss';
 import '@/styles/antd-custom.scss';
-import '@/styles/utils.scss';
 import MainAppLayout from './components/MainAppLayout/MainAppLayout.tsx';
 import MainPage from './components/MainPage/MainPage.tsx';
 import ModuleDetails from './components/ModuleDetails/ModuleDetails.tsx';
@@ -17,23 +16,24 @@ import LoginPage from './components/LoginPage/LoginPage.tsx';
 import ModuleTest from './components/ModuleTest/ModuleTest.tsx';
 
 export default function App() {
+  const location = useLocation();
 
   return (
-    <Routes location={location}>
-      <Route path='/' element={<MainAppLayout/>}>
-        <Route element={<PrivateRoutes/>}>
-          <Route path='/moderate' element={<Moderate/>}/>
+      <Routes location={location} key={location.pathname}>
+        <Route path='/' element={<MainAppLayout/>}>
+          <Route element={<PrivateRoutes/>}>
+            <Route path='/moderate' element={<Moderate/>}/>
+          </Route>
+          <Route index path='/' element={<MainPage/>}/>
+          <Route path='/module/:moduleId' element={<ModuleDetails/>}/>
+          <Route path='/module/:moduleId/article' element={<ModuleArticle/>}/>
+          <Route path='/module/:moduleId/test' element={<ModuleTest/>}/>
+          <Route path='/profile' element={<Profile/>}/>
+          <Route path='/profile/tests' element={<TestsList/>}/>
+          <Route path='/moderate/:moduleId/article' element={<ModerateArticle/>}/>
+          <Route path='/moderate/:moduleId/test' element={<ModerateTest/>}/>
         </Route>
-        <Route index path='/' element={<MainPage/>}/>
-        <Route path='/module/:moduleId' element={<ModuleDetails/>}/>
-        <Route path='/module/:id/article' element={<ModuleArticle/>}/>
-        <Route path='/module/:id/test' element={<ModuleTest/>}/>
-        <Route path='/profile' element={<Profile/>}/>
-        <Route path='/profile/tests' element={<TestsList/>}/>
-        <Route path='/moderate/:id/article' element={<ModerateArticle/>}/>
-        <Route path='/moderate/:id/test' element={<ModerateTest/>}/>
-      </Route>
-      <Route path='/login' element={<LoginPage/>}/>
-    </Routes>
+        <Route path='/login' element={<LoginPage/>}/>
+      </Routes>
   )
 }

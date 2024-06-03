@@ -26,11 +26,14 @@
   border-radius: 44px;
   border-width: 0;
   font-family: 'Ubuntu', Consolas, monospace;
+  transition: 0.25s ease-in-out;
 }
 
 .NavigationMenuTrigger:hover,
 .NavigationMenuLink:hover {
   opacity: 0.8;
+  cursor: pointer;
+  color: $basic-purple;
 }
 
 .NavigationMenuTrigger {

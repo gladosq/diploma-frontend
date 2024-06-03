@@ -1,10 +1,16 @@
 import {QueryCache, QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import React from 'react';
-import {ConfigProvider} from 'antd';
+import {ConfigProvider, message} from 'antd';
 import {useNavigate} from 'react-router-dom';
 
 export default function Providers({children}: { children: React.ReactNode }) {
   const history = useNavigate();
+
+  message.config({
+    top: 62,
+    duration: 2,
+    maxCount: 3,
+  });
 
   const [queryClient] = React.useState(() => new QueryClient({
     queryCache: new QueryCache({
@@ -18,7 +24,7 @@ export default function Providers({children}: { children: React.ReactNode }) {
       queries: {
         refetchOnWindowFocus: false,
         staleTime: 5 * 1000,
-        // retry: 0
+        retry: 0
       },
     }
   }));
@@ -33,6 +39,7 @@ export default function Providers({children}: { children: React.ReactNode }) {
               linkColor: '#F1EBEA',
               separatorColor: '#F1EBEA',
               lastItemColor: '#F1EBEA',
+              linkHoverColor: '#3481EB',
               separatorMargin: 14,
               fontFamily: 'Ubuntu',
               colorBgTextHover: 'transparent',
@@ -93,6 +100,12 @@ export default function Providers({children}: { children: React.ReactNode }) {
               titleFontSize: 20,
               fontFamily: 'Ubuntu',
               colorIcon: '#F1EBEA'
+            },
+            Message: {
+              fontFamily: 'Ubuntu',
+              contentBg: 'red',
+              fontSize: 40,
+              colorInfo: '#3A436A'
             }
           },
         }}

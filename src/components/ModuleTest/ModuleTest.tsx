@@ -2,7 +2,7 @@
 
 import s from './ModuleTest.module.scss';
 import {useParams} from 'react-router-dom';
-import {CreateModulePayload, fetchCreateModule, useModule} from '../../api/modules.ts';
+import {useModule} from '../../api/modules.ts';
 import {useCookies} from 'react-cookie';
 import {Form, message, Radio} from 'antd';
 import Button from '../UI/Button/Button.tsx';
@@ -23,14 +23,12 @@ export default function ModuleTest() {
   });
 
   const onFinish = async (formValues) => {
-    console.log('formValues:', formValues);
 
     mutate(
       {result: Object.values(formValues), moduleId: id!, token: cookies['auth-data']},
       {
         onSuccess: (res) => {
           message.info('Тест пройден');
-          console.log('res:', res);
           // setCookie('auth-data', res.accessToken);
           // history('/');
         },
@@ -56,7 +54,7 @@ export default function ModuleTest() {
       >
         {data?.testing.map((item, index) => {
           return (
-            <div className={s.outerWrapper}>
+            <div key={index} className={s.outerWrapper}>
               <div className={s.innerWrapper}>
                 <div className={s.titleContainer}>
                   <span className={s.questionNumber}>{index + 1}</span>
@@ -71,7 +69,7 @@ export default function ModuleTest() {
                     className={s.formItem}
                     rules={[{required: true, message: 'Выберите вариант ответа'}]}
                   >
-                    <Radio.Group onChange={(e) => console.log('e:', e)} className={s.radioGroup}>
+                    <Radio.Group className={s.radioGroup}>
                       <Radio className={s.radioItem} value={1}>
                         <div className={s.test}>
                           {item.variant1}{item.variant1}

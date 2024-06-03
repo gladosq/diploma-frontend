@@ -9,8 +9,6 @@ import {ProfileResponseType} from '../../api/authentication.ts';
 export default function Profile() {
   const {data: dataProfile} = useQuery<ProfileResponseType>({ queryKey: ['my-profile']});
 
-  console.log('dataProfile:', dataProfile);
-
   return (
     <div className={s.wrapper}>
       <div className={s.container}>
@@ -18,11 +16,7 @@ export default function Profile() {
           <h2 className={s.name}>{dataProfile?.name}</h2>
           <div className={s.status}>
             <div className={s.statusInner}>
-              Чтение материала
-              <CompleteIcon/>
-            </div>
-            <div className={s.statusInner}>
-              Прохождение теста
+              Чтение материала и прохождение теста
               <CompleteIcon/>
             </div>
           </div>

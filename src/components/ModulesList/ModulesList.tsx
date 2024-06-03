@@ -2,8 +2,13 @@ import s from './ModulesList.module.scss';
 import {Link} from 'react-router-dom';
 import Button from '../UI/Button/Button.tsx';
 import {Form, Input, message, Modal, Select} from 'antd';
-import {useState} from 'react';
-import {CreateModulePayload, fetchCreateModule, useAllModules} from '../../api/modules.ts';
+import {useEffect, useState} from 'react';
+import {
+  CreateModulePayload,
+  fetchCreateModule,
+  ModulesResponseType,
+  useAllModules
+} from '../../api/modules.ts';
 import {useCookies} from 'react-cookie';
 import {DifficultyEnum, RoleEnum} from '../../const/enum.ts';
 import {useMutation, useQuery} from '@tanstack/react-query';
@@ -11,10 +16,12 @@ import {difficultyMapper} from '../../utils/mappers.ts';
 import {SearchProps} from 'antd/es/input';
 import {getNumericWord} from '../../utils/common.ts';
 import {clsx} from 'clsx';
+import {moduleThemes} from '../../store/moduleThemes.ts';
 
 const {TextArea, Search} = Input;
 
 export default function ModulesList() {
+  const [modules, setModules] = useState<ModulesResponseType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm<CreateModulePayload['data']>();
   const [cookies] = useCookies(['auth-data']);
@@ -28,7 +35,19 @@ export default function ModulesList() {
     }
   });
 
-  const {data, isFetching, refetch} = useAllModules({token: cookies['auth-data']});
+  const {
+    data,
+    refetch,
+    isSuccess,
+    isFetching,
+    isRefetching
+  } = useAllModules({token: cookies['auth-data']});
+
+  useEffect(() => {
+    if (isSuccess) {
+      setModules(data);
+    }
+  }, [isFetching, isRefetching]);
 
   const onFinish = async (formValues: CreateModulePayload['data']) => {
     mutate(
@@ -49,7 +68,18 @@ export default function ModulesList() {
     );
   };
 
-  const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
+  const onSearch: SearchProps['onSearch'] = (value) => {
+
+    if (!value) {
+      if (isSuccess) setModules(data);
+    } else {
+      const filteredModules = modules.filter((item) => {
+        return item.title.toLowerCase().includes(value.toLowerCase()) || item.theme.toLowerCase().includes(value.toLowerCase());
+      });
+
+      setModules(filteredModules);
+    }
+  };
 
   return (
     <div className={s.wrapper}>
@@ -59,14 +89,12 @@ export default function ModulesList() {
           placeholder='Введите для поиска'
           allowClear
           onSearch={onSearch}
-          style={{width: 304}}
+          style={{width: 384}}
           className={s.searchInput}
         />
       </div>
       <ul className={s.list}>
-        {isFetching && <h1>preloader</h1>}
-        {data?.map((item) => {
-          console.log('item.difficulty:', item.difficulty);
+        {modules?.sort((a, b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt))).map((item) => {
           return (
             <li key={item.id} className={s.item}>
               <Link className={s.logoLink} to={`/module/${item.id}`}>
@@ -81,7 +109,9 @@ export default function ModulesList() {
                   <span className={s.theme}>{item.theme}</span>
                   <div className={s.infoInner}>
                     <div className={s.difficulty}>
-                      <span className={s.label}>{difficultyMapper[item.difficulty as DifficultyEnum]}</span></div>
+                      <span
+                        className={s.label}>{difficultyMapper[item.difficulty as DifficultyEnum]}</span>
+                    </div>
                     <span className={s.count}>
                       {item.testing.length} {getNumericWord(item.testing.length, ['вопрос', 'вопроса', 'вопросов'])}
                     </span>
@@ -146,10 +176,17 @@ export default function ModulesList() {
               className={s.formItem}
               rules={[{required: true, message: 'Укажите раздел'}]}
             >
-              <Input
-                className={s.input}
-                placeholder='Раздел'
-                size='large'
+              <Select
+                className={s.themeSelect}
+                showSearch
+                style={{ width: 200 }}
+                optionFilterProp="children"
+                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                filterSort={(optionA, optionB) =>
+                  (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                }
+                options={moduleThemes}
+                notFoundContent={<span style={{color: 'white'}}>Ничего не найдено</span>}
               />
             </Form.Item>
             <Form.Item

@@ -40,6 +40,7 @@ export default function TestsList() {
             />
           );
         })}
+        {isSuccess && !data.length && <span className={s.empty}>не найдено</span>}
       </div>
     </div>
   );
